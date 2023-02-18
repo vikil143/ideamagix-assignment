@@ -1,0 +1,12 @@
+{
+    "plugins": [
+        ["module-resolver", {
+                "root": ["./"],
+                "extensions": [".ts", ".tsx", ".jsx", ".js", ".json", ".svg", ".jpg"],
+                "alias": {
+                    "^@myapp/(.+)": "./src/\\1"
+                }
+            }
+        ]
+    ]
+}
