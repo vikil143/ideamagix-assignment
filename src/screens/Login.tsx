@@ -8,7 +8,8 @@ import Label from '@myapp/components/Label'
 import { MainStackScreenProps } from '@myapp/routes/types'
 import { useToast } from '@myapp/hooks/useToast'
 import makeRequest from '@myapp/utilities/makeRequest'
-import { endPoint } from '@myapp/utilities/endPoints'
+import { endPoints } from '@myapp/utilities/endPoints'
+import Loader from '@myapp/components/Loader'
 
 interface LoginScreenProps extends MainStackScreenProps { }
 
@@ -18,6 +19,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         email: "mor_2314",
         password: "83r5^_"
     });
+    const [loader, setLoader] = useState(false);
 
     const handleValidate = () => {
         let isValide = true;
@@ -38,17 +40,19 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     const onSubmit = async () => {
         const isValide = handleValidate();
         if (isValide) {
+            setLoader(true)
             try {
                 const formData = {
                     username: state.email,
                     password: state.password
                 }
-                const response = await makeRequest(endPoint.login, "POST", formData)
+                const response = await makeRequest(endPoints.login, "POST", formData)
                 console.log("response ", response.data)
                 navigation.navigate("Home")
             } catch (error: any) {
                 showToast(error.message as string, "danger")
             }
+            setLoader(false)
         }
     }
 
@@ -60,6 +64,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
     return (
         <View style={[commonStyles.flexOne, commonStyles.justifyCenter, commonStyles.pA15]}>
+            <Loader show={loader} />
             <View>
                 <Label>Email</Label>
                 <Spacing size={5} />

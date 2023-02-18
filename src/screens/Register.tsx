@@ -5,9 +5,19 @@ import InputBox from '@myapp/components/InputBox'
 import Label from '@myapp/components/Label'
 import Spacing from '@myapp/components/Spacing'
 import Button from '@myapp/components/Button'
+import makeRequest from '@myapp/utilities/makeRequest'
+import { endPoints } from '@myapp/utilities/endPoints'
+import { MainStackScreenProps } from '@myapp/routes/types'
+import { useToast } from '@myapp/hooks/useToast'
+import Loader from '@myapp/components/Loader'
 
-export default function RegisterScreen() {
+interface RegisterScreenProps extends MainStackScreenProps { }
 
+export default function RegisterScreen({ navigation }: RegisterScreenProps) {
+
+    const showToast = useToast();
+
+    const [loader, setLoader] = useState(false)
     const [state, setState] = useState({
         email: 'John@gmail.com',
         username: 'johnd',
@@ -43,8 +53,23 @@ export default function RegisterScreen() {
         setState({ ...state, address: { ...state.address, [name]: value } })
     }
 
+    const onSubmit = async () => {
+        try {
+            setLoader(true)
+            const formData = Object.assign({}, state);
+            const response = await makeRequest(endPoints.register, "POST", formData);
+            navigation.navigate("Success")
+        } catch (error: any) {
+            showToast(error.message, "danger");
+        }
+        setLoader(false)
+
+    }
+
     return (
         <ScrollView style={[commonStyles.flexOne, commonStyles.pA10]}>
+            <Loader show={loader} />
+
             <View>
                 <Label>Email Id</Label>
                 <InputBox name='email'
@@ -125,7 +150,7 @@ export default function RegisterScreen() {
                     onChangeValue={onChangeValue} />
             </View>
             <Spacing />
-            <Button text='Submit' onPress={() => { }} />
+            <Button text='Submit' onPress={onSubmit} />
             <Spacing />
         </ScrollView>
     )
