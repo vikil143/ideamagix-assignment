@@ -12,11 +12,19 @@ import { Colors } from '@myapp/utilities/Colors';
 import Spacing from '@myapp/components/Spacing';
 import { commonStyles } from '@myapp/utilities/commonStyles';
 import CartScreen from '@myapp/screens/Cart';
+import SplashScreen from '@myapp/screens/Splash';
+import { removeAsyncToken } from '@myapp/utilities/asyncStroage';
 
 const ListHeader = (props: StackHeaderProps) => {
+
+    const goToLogin = async () => {
+        await removeAsyncToken()
+        props.navigation.replace("Login")
+    }
+
     return (
         <View style={[styles.listHeader]}>
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+            <TouchableOpacity onPress={goToLogin}>
                 <Image style={[styles.backArrow]} source={require("../assests/icons/backArrow.png")} />
             </TouchableOpacity>
             <Spacing size={5} />
@@ -35,6 +43,7 @@ export default function MainNavigator() {
     return (
         <NavigationContainer>
             <MainStack.Navigator>
+                <MainStack.Screen name="Splash" component={SplashScreen} />
                 <MainStack.Screen name="Login" component={LoginScreen} />
                 <MainStack.Screen name="Home" options={{ header: ListHeader }} component={ListScreen} />
                 <MainStack.Screen name="Register" component={RegisterScreen} />

@@ -11,6 +11,10 @@ const makeRequest = async (endPoint: string, method: METHOD, formData: object) =
         headers,
     })
 
+    // instance.interceptors.response((data))
+
+    console.log("endpoint", endPoint)
+
     return await instance.request({
         method,
         url: endPoint,

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, FlatList, TouchableWithoutFeedback } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { commonStyles } from '@myapp/utilities/commonStyles'
 import ProductCard, { Products } from '@myapp/components/ProductCard'
 import makeRequest from '@myapp/utilities/makeRequest'
@@ -12,7 +12,9 @@ import SearchModal from '@myapp/components/SearchModal'
 import { Colors } from '@myapp/utilities/Colors'
 import Spacing from '@myapp/components/Spacing'
 import BottomSheet from '@myapp/components/BottomSheet'
+import FilterModal, { FilterApply } from '@myapp/components/FilterModal'
 
+type Type = "" | "Sort" | "Filter"
 
 interface ListScreenProps extends MainStackScreenProps { }
 
@@ -22,12 +24,22 @@ export default function ListScreen({ }: ListScreenProps) {
     let limit = 5
     const [loader, setLoader] = useState(false);
     const [searchModal, setSearchModal] = useState(false);
-    const [filterModal, setFilterModal] = useState(false)
+    const [filterModal, setFilterModal] = useState(false);
+    const type = useRef<Type>("")
+    const typeAscending = useRef<boolean>(false);
+    const typeFilter = useRef("")
 
     const showToast = useToast();
 
     useEffect(() => {
-        getProducts();
+        if (type.current === "") {
+            getProducts();
+        } else if (type.current === "Sort") {
+            onSort(typeAscending.current)
+        } else {
+            onFilter(typeFilter.current)
+        }
+
     }, [pageNo])
 
     const getProducts = async () => {
@@ -43,16 +55,67 @@ export default function ListScreen({ }: ListScreenProps) {
         setLoader(false)
     }
 
+    const onSort = async (isAccending: boolean) => {
+        try {
+            setLoader(true);
+            // console.log("Page no ", isAccending)
+            const response: AxiosResponse<Products[]> = await makeRequest(`${endPoints.products}sort="${isAccending ? "asc" : "desc"}"`, "GET", {});
+            // console.log("List ", response.data)
+            setProducts(response.data)
+        } catch (error: any) {
+            showToast(error.message, "danger");
+        }
+        setLoader(false)
+    }
+
+    const onFilter = async (category: string) => {
+        try {
+            setLoader(true);
+            // console.log("Page no ", isAccending)
+            const response: AxiosResponse<Products[]> = await makeRequest(`${category === "" ? endPoints.products : endPoints.productWithCatgory + category}`,
+                "GET", {});
+            // console.log("List ", response.data)
+            setProducts(response.data)
+        } catch (error: any) {
+            showToast(error.message, "danger");
+        }
+        setLoader(false)
+    }
+
+    const onApply = (item: FilterApply) => {
+        if (item.type === "Sort") {
+            type.current = "Sort"
+            typeAscending.current = item.accending
+            onSort(item.accending)
+        }
+        else {
+            type.current = "Filter"
+            if (item.category === "") {
+                type.current = ""
+            }
+            typeFilter.current = item.category
+            onFilter(item.category)
+        }
+    }
+
     return (
         <View style={[commonStyles.flexOne]}>
             <Loader show={loader} />
             <SearchModal show={searchModal} hide={() => setSearchModal(false)} />
-            <BottomSheet show={filterModal} hide={() => setFilterModal(false)}>
-                <View style={{ height: 300, backgroundColor: Colors.white, }} />
+            <BottomSheet show={filterModal}
+                takeHoleSpace
+                containerStyle={[commonStyles.flexOne]}
+                hide={() => {
+                    type.current = ""
+                    setFilterModal(false)
+                }}>
+                <FilterModal onApply={onApply} />
             </BottomSheet>
             <View style={[commonStyles.pA10, commonStyles.rowAlignCenter]}>
                 <TouchableWithoutFeedback onPress={() => setSearchModal(true)}>
-                    <View style={[styles.inputBox, commonStyles.flexOne]} />
+                    <View style={[styles.inputBox, commonStyles.flexOne]}>
+                        <Text>Search</Text>
+                    </View>
                 </TouchableWithoutFeedback>
                 <Spacing size={5} />
                 <TouchableWithoutFeedback onPress={() => setFilterModal(true)}>
@@ -86,7 +149,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.black,
     },
     inputBox: {
-        padding: 20,
+        padding: 10,
         backgroundColor: Colors.white,
         borderRadius: 8,
     }

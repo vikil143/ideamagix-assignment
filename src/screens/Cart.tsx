@@ -28,7 +28,7 @@ export default function CartScreen({ }: CartScreenProps) {
         try {
             setLoader(true);
             console.log("Page no ", pageNo)
-            const response: AxiosResponse<Products[]> = await makeRequest(endPoints.carts + "limit=" + pageNo * limit, "GET", {});
+            const response: AxiosResponse<Products[]> = await makeRequest(endPoints.cartWithUser, "GET", {});
             console.log("List ", response.data)
             setCarts(response.data)
         } catch (error: any) {

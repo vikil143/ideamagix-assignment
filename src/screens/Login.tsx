@@ -10,12 +10,15 @@ import { useToast } from '@myapp/hooks/useToast'
 import makeRequest from '@myapp/utilities/makeRequest'
 import { endPoints } from '@myapp/utilities/endPoints'
 import Loader from '@myapp/components/Loader'
+import { setAsuncToken } from '@myapp/utilities/asyncStroage'
 
 interface LoginScreenProps extends MainStackScreenProps { }
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
     const showToast = useToast();
     const [state, setState] = useState({
+        // email: "",
+        // password: ""
         email: "mor_2314",
         password: "83r5^_"
     });
@@ -47,7 +50,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
                     password: state.password
                 }
                 const response = await makeRequest(endPoints.login, "POST", formData)
-                console.log("response ", response.data)
+                setAsuncToken(response.data.token)
+                console.log("response ", response.data.token)
                 navigation.navigate("Home")
             } catch (error: any) {
                 showToast(error.message as string, "danger")

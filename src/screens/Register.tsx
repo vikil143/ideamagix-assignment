@@ -19,24 +19,43 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
 
     const [loader, setLoader] = useState(false)
     const [state, setState] = useState({
-        email: 'John@gmail.com',
-        username: 'johnd',
-        password: 'm38rmF$',
+        email: '',
+        username: '',
+        password: '',
         name: {
-            firstname: 'John',
-            lastname: 'Doe'
+            firstname: '',
+            lastname: ''
         },
         address: {
-            city: 'kilcoole',
-            street: '7835 new road',
-            number: "3",
-            zipcode: '12926-3874',
+            city: '',
+            street: '',
+            number: "",
+            zipcode: '',
             geolocation: {
                 lat: '-37.3159',
                 long: '81.1496'
             }
         },
-        phone: '1-570-236-7033'
+        phone: ''
+        // Default values for testing
+        // email: 'John@gmail.com',
+        // username: 'johnd',
+        // password: 'm38rmF$',
+        // name: {
+        //     firstname: 'John',
+        //     lastname: 'Doe'
+        // },
+        // address: {
+        //     city: 'kilcoole',
+        //     street: '7835 new road',
+        //     number: "3",
+        //     zipcode: '12926-3874',
+        //     geolocation: {
+        //         lat: '-37.3159',
+        //         long: '81.1496'
+        //     }
+        // },
+        // phone: '1-570-236-7033'
     })
 
     const onChangeValue = (name: string, value: string) => setState({ ...state, [name]: value });

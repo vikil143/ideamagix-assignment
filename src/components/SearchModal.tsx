@@ -61,7 +61,7 @@ export default function SearchModal({ show, hide }: SearchModalProps) {
 
     return (
         <Modal visible={show} animationType="slide" onRequestClose={hide}>
-            <View style={[commonStyles.flexOne]}>
+            <View style={[commonStyles.flexOne, styles.container]}>
                 <View style={[commonStyles.pA10, commonStyles.rowAlignCenter]}>
                     <TouchableOpacity onPress={hide}>
                         <Image style={[styles.backArrow]} source={require("../assests/icons/backArrow.png")} />
@@ -110,4 +110,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
         borderRadius: 5,
     },
+    container: {
+        backgroundColor: "#fafafa",
+        flex: 1,
+    }
 })

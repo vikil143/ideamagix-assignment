@@ -30,7 +30,7 @@ export default function BottomSheet({ show, hide, children, takeHoleSpace, conta
                     )}
                 </TouchableWithoutFeedback>
                 <View style={[styles.mainContainer, containerStyle]}>
-                    {children}
+                    {React.cloneElement(children, { hide })}
                 </View>
             </SafeAreaView>
         </Modal>

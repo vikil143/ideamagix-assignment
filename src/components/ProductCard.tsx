@@ -6,6 +6,8 @@ import Spacing from './Spacing'
 import { commonStyles } from '@myapp/utilities/commonStyles'
 import makeRequest from '@myapp/utilities/makeRequest'
 import { endPoints } from '@myapp/utilities/endPoints'
+import { USERID } from '@myapp/utilities/config'
+import { useToast } from '@myapp/hooks/useToast'
 
 
 export interface Products {
@@ -13,12 +15,26 @@ export interface Products {
     title: string;
     category: string;
     price: string;
+    id: number;
 }
 
-export default function ProductCard({ image, title, category, price }: Products) {
+export default function ProductCard({ image, title, category, price, id }: Products) {
+
+    const showToast = useToast();
 
     const addToCart = async () => {
-        // const response = await makeRequest(endPoints.)
+        try {
+            const formData = {
+                userId: USERID,
+                date: new Date(),
+                products: [{ productId: id, quantity: 1 }]
+            }
+            const response = await makeRequest(endPoints.addCart, "POST", formData)
+            showToast("Add to cart", "success")
+
+        } catch (error: any) {
+            showToast(error.message, "danger")
+        }
     }
 
     return (
